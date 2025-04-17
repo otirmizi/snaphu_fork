@@ -50,17 +50,27 @@
 #include <float.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <time.h>
-#include <sys/time.h>
-#include <sys/resource.h>
 #include <assert.h>
 
 #include "snaphu.h"
+
+#ifndef _WIN32           /* ------ POSIX‑only section ------ */
+  #include <unistd.h>
+  #include <fcntl.h>
+  #include <sys/wait.h>
+  #include <sys/time.h>
+  #include <sys/resource.h>
+  #include <sys/mman.h>   /* if present */
+#else                    /* ------ Windows fall‑back ------- */
+  #include <io.h>         /* MSVC / MinGW replacement for unistd bits */
+  /* Optional: bring in WinSock or WinAPI if the code later needs it */
+  #include <windows.h>
+  /* Disable features that rely on POSIX shared memory, fork, etc. */
+  #define NO_CS2
+#endif
 
 /* for measuring time */
 
